@@ -3,14 +3,6 @@ plugins {
     id("maven-publish")
 }
 
-val configurationDesktopIntegrationJava: Configuration = configurations.create("commonDesktopIntegration") {
-    isCanBeResolved = true
-}
-
-dependencies {
-    configurationDesktopIntegrationJava(project(path = ":common", configuration = "commonDesktopJava"))
-}
-
 tasks {
     processResources {
         inputs.property("version", version)
@@ -23,10 +15,6 @@ tasks {
     jar {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         from(rootDir.resolve("LICENSE.md"))
-
-        // Entry-point for desktop integration when the file is executed directly
-        from(configurationDesktopIntegrationJava)
-        manifest.attributes["Main-Class"] = "net.caffeinemc.mods.sodium.desktop.LaunchWarn"
     }
 }
 

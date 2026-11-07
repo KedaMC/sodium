@@ -2,8 +2,6 @@ package net.caffeinemc.mods.sodium.client;
 
 import net.caffeinemc.mods.sodium.client.console.Console;
 import net.caffeinemc.mods.sodium.client.console.message.MessageLevel;
-import net.caffeinemc.mods.sodium.client.data.fingerprint.FingerprintMeasure;
-import net.caffeinemc.mods.sodium.client.data.fingerprint.HashedFingerprint;
 import net.caffeinemc.mods.sodium.client.gui.SodiumDebugEntry;
 import net.caffeinemc.mods.sodium.client.gui.SodiumFpsPercentilesEntry;
 import net.caffeinemc.mods.sodium.client.gui.SodiumOptions;
@@ -33,12 +31,6 @@ public class SodiumClientMod {
         MOD_VERSION = version;
 
         OPTIONS = loadConfig();
-
-        try {
-            updateFingerprint();
-        } catch (Throwable t) {
-            LOGGER.error("Failed to update fingerprint", t);
-        }
     }
 
     public static SodiumOptions options() {
@@ -89,35 +81,6 @@ public class SodiumClientMod {
         }
 
         return MOD_VERSION;
-    }
-
-    private static void updateFingerprint() {
-        var current = FingerprintMeasure.create();
-
-        if (current == null) {
-            return;
-        }
-
-        HashedFingerprint saved = null;
-
-        try {
-            saved = HashedFingerprint.loadFromDisk();
-        } catch (Throwable t) {
-            LOGGER.error("Failed to load existing fingerprint",  t);
-        }
-
-        if (saved == null || !current.looselyMatches(saved)) {
-            HashedFingerprint.writeToDisk(current.hashed());
-
-            OPTIONS.notifications.hasSeenDonationPrompt = false;
-            OPTIONS.notifications.hasClearedDonationButton = false;
-
-            try {
-                SodiumOptions.writeToDisk(OPTIONS);
-            } catch (IOException e) {
-                LOGGER.error("Failed to update config file", e);
-            }
-        }
     }
 
     public static boolean allowDebuggingOptions() {

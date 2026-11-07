@@ -1,5 +1,6 @@
 package net.caffeinemc.mods.sodium.mixin;
 
+import net.caffeinemc.mods.sodium.client.compatibility.environment.AndroidPlatform;
 import net.caffeinemc.mods.sodium.client.data.config.MixinConfig;
 import net.caffeinemc.mods.sodium.client.services.PlatformRuntimeInformation;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,9 @@ public class SodiumMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
+        // Fails fast before any mixin is applied if this is not aarch64 Android
+        AndroidPlatform.requireSupported();
+
         try {
             this.config = MixinConfig.load(new File("./config/sodium-mixins.properties"));
         } catch (Exception e) {

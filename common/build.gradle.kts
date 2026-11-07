@@ -36,8 +36,6 @@ sourceSets {
             compileClasspath += boot.output
         }
     }
-
-    create("desktop")
 }
 
 repositories {
@@ -133,7 +131,6 @@ fun exportSourceSet(name: String, sourceSet: SourceSet) {
 exportSourceSet("commonMain", sourceSets["main"])
 exportSourceSet("commonApi", sourceSets["api"])
 exportSourceSet("commonBoot", sourceSets["boot"])
-exportSourceSet("commonDesktop", sourceSets["desktop"])
 
 tasks.jar { enabled = false }
 tasks.remapJar { enabled = false }
