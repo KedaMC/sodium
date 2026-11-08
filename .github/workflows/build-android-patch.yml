@@ -41,7 +41,7 @@ jobs:
           cache-read-only: false
 
       - name: Execute Gradle assemble
-        # Produces build/mods/sodium-fabric-*.jar and build/mods/sodium-neoforge-*.jar
+        # Produces build/mods/sodium-fabric-*.jar
         run: ./gradlew assemble --stacktrace
 
       - name: List built jars

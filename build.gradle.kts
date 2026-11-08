@@ -1,4 +1,5 @@
 import me.modmuss50.mpp.ReleaseType
+import me.modmuss50.mpp.platforms.curseforge.CurseforgeOptions
 import me.modmuss50.mpp.platforms.modrinth.ModrinthOptions
 import java.util.*
 
@@ -13,11 +14,12 @@ gradle.projectsEvaluated {
         }
 
         val releasePlatform: String = project.providers.gradleProperty("build.release.platform").orNull
-                ?: return@publishMods println("build.release.platform must be defined (expected: both, fabric, neoforge)")
+                ?: return@publishMods println("build.release.platform must be defined (expected: both, fabric)")
 
         val releaseDestination: String = project.providers.gradleProperty("build.release.destination").orNull
-                ?: return@publishMods println("build.release.destination must be defined (expected: GH+MR, GH)")
+                ?: return@publishMods println("build.release.destination must be defined (expected: GH+MR+CF, GH+MR, GH)")
         val publishModrinth = releaseDestination.contains("MR")
+        val publishCurseforge = releaseDestination.contains("CF")
 
         val modVersion = BuildConfig.createVersionString(project);
 
@@ -28,14 +30,19 @@ gradle.projectsEvaluated {
         }
         changelog = BuildConfig.getChangelog(project)
 
+        val curseforgeShared = curseforgeOptions {
+            accessToken = project.providers.environmentVariable("CURSEFORGE_API_KEY")
+            projectId = BuildConfig.CURSEFORGE_PROJECT_ID
+            minecraftVersions.add(BuildConfig.MINECRAFT_VERSION)
+        }
+
         val modrinthShared = modrinthOptions {
             accessToken = project.providers.environmentVariable("MODRINTH_API_KEY")
             projectId = BuildConfig.MODRINTH_PROJECT_ID
             minecraftVersions.add(BuildConfig.MINECRAFT_VERSION)
         }
 
-        setupFor("Fabric", releasePlatform, publishModrinth, modrinthShared)
-        setupFor("NeoForge", releasePlatform, publishModrinth, modrinthShared)
+        setupFor("Fabric", releasePlatform, publishCurseforge, publishModrinth, curseforgeShared, modrinthShared)
 
         github {
             accessToken = project.providers.environmentVariable("GITHUB_TOKEN")
@@ -51,7 +58,7 @@ gradle.projectsEvaluated {
     }
 }
 
-fun me.modmuss50.mpp.ModPublishExtension.setupFor(loaderName: String, releasePlatform: String, publishModrinth: Boolean, modrinthOptions: Provider<ModrinthOptions>) {
+fun me.modmuss50.mpp.ModPublishExtension.setupFor(loaderName: String, releasePlatform: String, publishCurseforge: Boolean, publishModrinth: Boolean, curseforgeOptions: Provider<CurseforgeOptions>, modrinthOptions: Provider<ModrinthOptions>) {
     val loaderLowercase = loaderName.lowercase(Locale.ROOT)
 
     if (releasePlatform == "both" || releasePlatform == loaderLowercase) {
@@ -60,6 +67,20 @@ fun me.modmuss50.mpp.ModPublishExtension.setupFor(loaderName: String, releasePla
 
         val releaseTitle = "Sodium ${BuildConfig.MOD_VERSION} for $loaderName ${BuildConfig.MINECRAFT_VERSION}"
         val releaseVersion = "${BuildConfig.RELEASE_TAG}-$loaderLowercase"
+
+        if (publishCurseforge) {
+            curseforge("curseforge$loaderName") {
+                from(curseforgeOptions)
+
+                file.set(jar)
+                displayName = releaseTitle
+                version = releaseVersion
+                modLoaders.add(loaderLowercase)
+
+                clientRequired = true
+                serverRequired = false
+            }
+        }
 
         if (publishModrinth) {
             modrinth("modrinth$loaderName") {

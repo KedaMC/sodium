@@ -2,7 +2,6 @@ import org.gradle.api.Project
 
 object BuildConfig {
     val MINECRAFT_VERSION: String = "1.21.11"
-    val NEOFORGE_VERSION: String = "21.11.42"
     val FABRIC_LOADER_VERSION: String = "0.19.2"
     val FABRIC_API_VERSION: String = "0.140.0+1.21.11"
     val SUPPORT_FRAPI : Boolean = true
@@ -20,6 +19,7 @@ object BuildConfig {
 
     val RELEASE_TAG: String = "mc$MINECRAFT_VERSION_SHORT-$MOD_VERSION"
 
+    val CURSEFORGE_PROJECT_ID = "394468"
     val MODRINTH_PROJECT_ID = "AANobbMI"
 
     fun createVersionString(project: Project): String {

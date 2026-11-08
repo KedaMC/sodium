@@ -17,7 +17,8 @@ then consider [buying me a coffee](https://caffeinemc.net/donate).
 
 #### Stable builds
 
-The latest stable release of Sodium can be downloaded from our official [Modrinth](https://modrinth.com/mod/sodium) page.
+The latest stable release of Sodium can be downloaded from our official [Modrinth](https://modrinth.com/mod/sodium) and
+[CurseForge](https://www.curseforge.com/minecraft/mc-mods/sodium) pages.
 
 #### Nightly builds (for developers)
 
@@ -29,8 +30,7 @@ For a complete listing of available nightly builds, please see [the wiki page](h
 
 ### 🖥️ Installation
 
-Since the release of Sodium 0.6.0, both the _Fabric_ and _NeoForge_ mod loaders are supported. We generally recommend
-that new users prefer to use the _Fabric_ mod loader, since it is more lightweight and stable (for the time being.)
+This fork only supports the _Fabric_ mod loader, and only on aarch64 Android. The NeoForge module has been removed.
 
 For more information about downloading and installing the mod, please refer to our [Installation Guide](https://github.com/CaffeineMC/sodium/wiki/Installation).
 
