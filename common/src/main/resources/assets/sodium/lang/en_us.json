@@ -81,8 +81,6 @@
   "sodium.options.pixel_filtering_mode.tooltip" : "Controls the appearance of edges between pixels within block textures. \"Nearest\" mode results in sharp pixel boundaries, while \"Linear\" mode makes them a little blurry. \"Nearest\" can be slightly faster.",
   "sodium.options.pixel_filtering_mode.nearest" : "Nearest",
   "sodium.options.pixel_filtering_mode.linear" : "Linear",
-  "sodium.options.use_no_error_context.name": "Use No Error Context",
-  "sodium.options.use_no_error_context.tooltip": "When enabled, the OpenGL context will be created with error checking disabled. This slightly improves rendering performance, but it can make debugging sudden unexplained crashes much harder.",
   "sodium.options.buttons.undo": "Undo",
   "sodium.options.buttons.apply": "Apply",
   "sodium.options.buttons.donate": "Buy us a coffee!",

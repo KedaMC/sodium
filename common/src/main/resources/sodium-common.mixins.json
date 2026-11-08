@@ -13,7 +13,6 @@
   "client": [
     "core.GlCommandEncoderAccessor",
     "core.MinecraftMixin",
-    "core.WindowMixin",
     "core.gui.LevelLoadTrackerMixin",
     "core.model.colors.BlockColorsMixin",
     "core.render.BlockEntityTypeMixin",
