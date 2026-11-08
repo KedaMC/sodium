@@ -18,7 +18,6 @@ on:
         type: choice
         description: Destination
         options:
-          - GH+MR+CF
           - GH+MR
           - GH
 
@@ -57,10 +56,9 @@ jobs:
           name: sodium-artifacts-${{ steps.ref.outputs.branch }}
           path: build/mods/*.jar
 
-      - name: Publish Modrinth, Curseforge and Github Releases
+      - name: Publish Modrinth and Github Releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
           MODRINTH_API_KEY: ${{ secrets.MODRINTH_API_KEY }}
         run: ./gradlew publishMods -Pbuild.release=true -Pbuild.release.platform=${{ inputs.platform }} -Pbuild.release.destination=${{ inputs.destination }}
 

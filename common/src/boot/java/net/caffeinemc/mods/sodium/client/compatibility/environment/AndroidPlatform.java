@@ -1,9 +1,13 @@
 package net.caffeinemc.mods.sodium.client.compatibility.environment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This build of Sodium only supports aarch64 devices running Minecraft through an Android launcher. The detection is
@@ -11,6 +15,9 @@ import java.util.Locale;
  * that it can run during pre-launch.
  */
 public final class AndroidPlatform {
+    private static final Logger LOGGER = LoggerFactory.getLogger("Sodium-Platform");
+    private static final AtomicBoolean LOGGED = new AtomicBoolean();
+
     /**
      * Environment variables which Android launchers set for the game process. Add the variable of your launcher here
      * if it is not detected through its file paths.
@@ -49,6 +56,12 @@ public final class AndroidPlatform {
      */
     public static void requireSupported() {
         if (isSupported()) {
+            // This is called from several entry points, only report the result once
+            if (LOGGED.compareAndSet(false, true)) {
+                LOGGER.info("Platform check passed: os.arch='{}', os.name='{}', android signals={}",
+                        ARCH, System.getProperty("os.name"), ANDROID_SIGNALS);
+            }
+
             return;
         }
 

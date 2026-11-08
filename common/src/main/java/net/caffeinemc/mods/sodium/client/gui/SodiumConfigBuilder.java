@@ -1,9 +1,7 @@
 package net.caffeinemc.mods.sodium.client.gui;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.platform.Monitor;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.platform.VideoMode;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
@@ -15,7 +13,6 @@ import net.caffeinemc.mods.sodium.api.config.option.OptionImpact;
 import net.caffeinemc.mods.sodium.api.config.option.Range;
 import net.caffeinemc.mods.sodium.api.config.structure.*;
 import net.caffeinemc.mods.sodium.client.SodiumClientMod;
-import net.caffeinemc.mods.sodium.client.compatibility.environment.OsUtils;
 import net.caffeinemc.mods.sodium.client.compatibility.workarounds.Workarounds;
 import net.caffeinemc.mods.sodium.client.gl.arena.staging.MappedStagingBuffer;
 import net.caffeinemc.mods.sodium.client.gl.device.RenderDevice;
@@ -40,7 +37,6 @@ import org.lwjgl.opengl.GLCapabilities;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
-import java.util.Optional;
 
 // TODO: get initialValue from the vanilla options (it's private)
 public class SodiumConfigBuilder implements ConfigEntryPoint {
@@ -75,13 +71,6 @@ public class SodiumConfigBuilder implements ConfigEntryPoint {
 
             SodiumClientMod.logger().info("Flushed changes to Sodium configuration");
         };
-    }
-
-    private Monitor getMonitor() {
-        if (this.window == null) {
-            return null;
-        }
-        return this.window.findBestMonitor();
     }
 
     public static void registerIcon(TextureManager textureManager) {
@@ -211,42 +200,6 @@ public class SodiumConfigBuilder implements ConfigEntryPoint {
                                         this.vanillaOpts.fullscreen().set(this.window.isFullscreen());
                                     }
                                 }, this.vanillaOpts.fullscreen()::get)
-                )
-                .addOption(
-                        builder.createIntegerOption(Identifier.parse("sodium:general.fullscreen_resolution"))
-                                .setStorageHandler(this.vanillaStorage)
-                                .setName(Component.translatable("options.fullscreen.resolution"))
-                                .setTooltip(Component.translatable("sodium.options.fullscreen_resolution.tooltip"))
-                                .setValueFormatter(ControlValueFormatterImpls.resolution())
-                                // the max value of 1 when the monitor is not available prevents an exception from being thrown
-                                .setValidator(new FullscreenResolutionRange())
-                                .setDefaultValue(0)
-                                .setBinding(value -> {
-                                    var monitor = this.getMonitor();
-                                    if (monitor != null) {
-                                        this.window.setPreferredFullscreenVideoMode(0 == value ? Optional.empty() : Optional.of(monitor.getMode(value - 1)));
-                                    }
-                                }, () -> {
-                                    var monitor = this.getMonitor();
-                                    if (monitor == null) {
-                                        return 0;
-                                    } else {
-                                        Optional<VideoMode> optional = this.window.getPreferredFullscreenVideoMode();
-                                        return optional.map((videoMode) -> monitor.getVideoModeIndex(videoMode) + 1).orElse(0);
-                                    }
-                                })
-                                .setEnabledProvider(
-                                        (state) -> {
-                                            var monitor = this.getMonitor();
-                                            if (monitor == null || monitor.getModeCount() <= 0) {
-                                                return false;
-                                            }
-                                            var os = OsUtils.getOs();
-                                            return (os == OsUtils.OperatingSystem.WIN || os == OsUtils.OperatingSystem.MAC) &&
-                                                    state.readBooleanOption(Identifier.parse("sodium:general.fullscreen"));
-                                        },
-                                        Identifier.parse("sodium:general.fullscreen"))
-                                .setFlags(OptionFlag.REQUIRES_VIDEOMODE_RELOAD)
                 )
                 .addOption(
                         builder.createBooleanOption(Identifier.parse("sodium:general.vsync"))
